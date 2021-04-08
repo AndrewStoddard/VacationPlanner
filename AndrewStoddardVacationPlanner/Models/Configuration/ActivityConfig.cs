@@ -11,6 +11,7 @@ namespace AndrewStoddardVacationPlanner.Models.Configuration
         public void Configure(EntityTypeBuilder<Activity> builder)
         {
             builder.HasKey(activity => activity.Id);
+            builder.HasMany(a => a.Trips).WithMany(t => t.Activities);
             builder.HasData(
                 new Activity {Id = 1, Name = "SkyDiving"},
                 new Activity {Id = 2, Name = "Parasail"},

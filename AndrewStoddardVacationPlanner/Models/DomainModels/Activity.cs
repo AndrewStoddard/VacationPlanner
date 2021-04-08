@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace AndrewStoddardVacationPlanner.Models.DomainModels
 {
@@ -10,6 +11,8 @@ namespace AndrewStoddardVacationPlanner.Models.DomainModels
 
         [Required(ErrorMessage = "Activity Name is required")]
         public string Name { get; set; }
+
+        [Required] public virtual ICollection<Trip> Trips { get; set; }
 
         #endregion
     }

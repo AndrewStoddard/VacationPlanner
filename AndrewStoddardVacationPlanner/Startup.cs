@@ -33,7 +33,7 @@ namespace AndrewStoddardVacationPlanner
         {
             services.AddControllersWithViews();
             services.AddDbContext<VacationContext>(options =>
-                options.UseSqlServer(this.Configuration.GetConnectionString("SalesContext")));
+                options.UseSqlServer(this.Configuration.GetConnectionString("VacationContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
         }
 
