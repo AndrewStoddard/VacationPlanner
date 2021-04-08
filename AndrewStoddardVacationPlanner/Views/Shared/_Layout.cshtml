@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>Andrew Stoddard - @ViewData["Title"] - Vacation Planner</title>
+    <link rel="stylesheet"
+          href="https://use.fontawesome.com/releases/v5.8.1/css/all.css"
+          integrity="sha384-50oBUHEmvpQ+1lW4y57PTFmhCaXp0ML5d60M1M7uH2+nqUivzIebhndOJK28anvf"
+          crossorigin="anonymous">
+    <link rel="stylesheet" href="~/lib/bootstrap/css/bootstrap.css" />
+    <script src="~/lib/jquery/jquery.js"></script>
+    <script src="~/lib/bootstrap/js/bootstrap.js"></script>
+    <script src="~/lib/jquery/jquery.js"></script>
+
+</head>
+<body>
+<header>
+    <div class="jumbotron m-2 text-center"><h1>Vacation Planner</h1></div>
+</header>
+<div class="container-fluid m-3 p-0">
+    <nav class="navbar navbar-expand-sm mb-3 p-0">
+        <div class="container-fluid p-0">
+            <div>
+                <ul class="navbar-nav flex-grow-1">
+                    <li class="nav-item mr-4">
+                        <a class="nav-link text-dark" asp-controller="Vacation" asp-action="Home">Home</a>
+                    </li>
+                    <li class="nav-item mr-4 ml-4">
+                        <a class="nav-link text-dark" asp-controller="Vacation" asp-action="AddTrip">Add Trip</a>
+                    </li>
+                    <li class="nav-item ml-4">
+                        <a class="nav-link text-dark" asp-controller="Vacation" asp-action="Manage">Manage</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+</div>
+<div class="container">
+    <main>
+        @if (TempData.Keys.Contains("message"))
+        {
+            <h4 class="bg-info text-center text-white p-2">@TempData["message"]</h4>
+        }
+        @RenderBody()
+    </main>
+</div>
+
+</body>
+</html>

@@ -53,7 +53,7 @@ namespace AndrewStoddardVacationPlanner
             {
                 endpoints.MapControllerRoute(
                     "default",
-                    "{controller=Vacation}/{action=Index}/");
+                    "{controller=Vacation}/{action=Home}/");
             });
         }
 

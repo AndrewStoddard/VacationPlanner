@@ -19,5 +19,14 @@ namespace AndrewStoddardVacationPlanner.Controllers
         }
 
         #endregion
+
+        #region Methods
+
+        public IActionResult Home()
+        {
+            return View();
+        }
+
+        #endregion
     }
 }
