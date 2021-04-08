@@ -18,7 +18,7 @@ namespace AndrewStoddardVacationPlanner.Models.DomainModels
 
         public Accommodation Accommodation { get; set; }
 
-        [Required] public virtual ICollection<Activity> Activities { get; set; }
+        public virtual ICollection<Activity> Activities { get; set; }
 
         [Required] [DataType(DataType.Date)] public DateTime StartDate { get; set; }
 

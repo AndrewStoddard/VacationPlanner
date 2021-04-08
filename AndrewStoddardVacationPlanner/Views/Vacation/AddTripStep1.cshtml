@@ -1,0 +1,24 @@
+﻿@model Trip
+@{
+    ViewData["Title"] = "Add Trip";
+}
+<div class="container">
+    <form class="form-group" asp-action="AddTripStep2" method="post">
+        <div asp-validation-summary="All" class="text-danger"></div>
+
+        <label>Destination: </label>
+        <select class="form-control" asp-for="DestinationId" asp-items="@(new SelectList(ViewBag.Destinations, "Id","Name"))"></select>
+
+        <label>Accommodation: </label>
+        <select class="form-control" asp-for="AccommodationId" asp-items="@(new SelectList(ViewBag.Accommodations, "Id","Name"))"></select>
+
+        <label>Start: </label>
+        <input class="form-control" asp-for="StartDate" />
+
+        <label>End: </label>
+        <input class="form-control m-1" asp-for="EndDate" />
+
+        <button type="submit" class="btn btn-primary m-1">Next</button>
+        <a class="btn btn-primary" asp-action="Home">Cancel</a>
+    </form>
+</div>

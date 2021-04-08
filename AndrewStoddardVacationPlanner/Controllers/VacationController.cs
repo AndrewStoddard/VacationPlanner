@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using AndrewStoddardVacationPlanner.Models.DataAccessLayer;
 using AndrewStoddardVacationPlanner.Models.DomainModels;
@@ -49,6 +50,9 @@ namespace AndrewStoddardVacationPlanner.Controllers
 
             var totalPages = trips.Count / pageSize;
             totalPages += trips.Count % pageSize == 0 ? 0 : 1;
+            trips = trips.Skip((pageNumber - 1) * pageSize).Take(pageSize > trips.Count ? trips.Count : pageSize)
+                         .ToList();
+
             var viewModel = new VacationListViewModel {
                 PageNumber = pageNumber,
                 PageSize = pageSize,
@@ -109,6 +113,9 @@ namespace AndrewStoddardVacationPlanner.Controllers
         [HttpGet]
         public IActionResult AddTripStep1()
         {
+            ViewBag.Destinations = this.unitOfWork.Destinations.Get().ToList();
+            ViewBag.Accommodations = this.unitOfWork.Accommodations.Get().ToList();
+
             return View();
         }
 
@@ -117,23 +124,30 @@ namespace AndrewStoddardVacationPlanner.Controllers
         {
             if (ModelState.IsValid)
             {
-                TempData["trip"] = trip;
+                TempData["trip_dest"] = trip.DestinationId;
+                TempData["trip_acc"] = trip.AccommodationId;
+                TempData["trip_start"] = trip.StartDate;
+                TempData["trip_end"] = trip.EndDate;
+                ViewBag.Activities = this.unitOfWork.Activities.Get().ToList();
 
                 return View();
             }
 
+            ViewBag.Destinations = this.unitOfWork.Destinations.Get().ToList();
+            ViewBag.Accommodations = this.unitOfWork.Accommodations.Get().ToList();
             return View("AddTripStep1", trip);
         }
 
         [HttpPost]
         public IActionResult AddTrip(Trip trip)
         {
-            var tripdata = (Trip) TempData["trip"];
-            trip.DestinationId = tripdata.DestinationId;
-            trip.AccommodationId = tripdata.AccommodationId;
-            trip.StartDate = tripdata.StartDate;
-            trip.EndDate = tripdata.EndDate;
+            trip.DestinationId = (int) TempData["trip_dest"];
+            trip.AccommodationId = (int) TempData["trip_acc"];
+            trip.StartDate = (DateTime) TempData["trip_start"];
+            trip.EndDate = (DateTime) TempData["trip_end"];
             this.unitOfWork.Trips.Insert(trip);
+            this.unitOfWork.Save();
+
             TempData["message"] =
                 $"Trip for {this.unitOfWork.Destinations.Get().FirstOrDefault(t => t.Id == trip.DestinationId).Name} on {trip.StartDate.ToShortDateString()}";
 
