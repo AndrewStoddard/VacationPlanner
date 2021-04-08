@@ -15,7 +15,7 @@ namespace AndrewStoddardVacationPlanner.Controllers
         #region Data members
 
         private readonly IUnitOfWork unitOfWork;
-        private IHttpContextAccessor httpContextAccessor;
+        private readonly IHttpContextAccessor httpContextAccessor;
 
         #endregion
 
@@ -24,6 +24,7 @@ namespace AndrewStoddardVacationPlanner.Controllers
         public VacationController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
+            this.httpContextAccessor = httpContextAccessor;
         }
 
         #endregion
@@ -33,7 +34,8 @@ namespace AndrewStoddardVacationPlanner.Controllers
         public IActionResult Home(int pageNumber = 1)
         {
             var pageSize = this.httpContextAccessor.HttpContext.Session.GetInt32("page_size") ?? 2;
-            var trips = this.unitOfWork.Trips.Get().Include(t => t.Activities).Include(t => t.Accommodation).ToList();
+            var trips = this.unitOfWork.Trips.Get().Include(t => t.Activities).Include(t => t.Destination)
+                            .Include(t => t.Accommodation).ToList();
             if (this.httpContextAccessor.HttpContext.Session.GetInt32("sort_direction") ==
                 (int) SortDirection.Ascending)
             {
