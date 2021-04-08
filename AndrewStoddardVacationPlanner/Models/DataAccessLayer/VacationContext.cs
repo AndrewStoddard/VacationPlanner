@@ -1,4 +1,5 @@
-﻿using AndrewStoddardVacationPlanner.Models.DomainModels;
+﻿using AndrewStoddardVacationPlanner.Models.Configuration;
+using AndrewStoddardVacationPlanner.Models.DomainModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace AndrewStoddardVacationPlanner.Models.DataAccessLayer
@@ -26,6 +27,10 @@ namespace AndrewStoddardVacationPlanner.Models.DataAccessLayer
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.ApplyConfiguration(new AccommodationConfig());
+            modelBuilder.ApplyConfiguration(new DestinationConfig());
+            modelBuilder.ApplyConfiguration(new ActivityConfig());
+            modelBuilder.ApplyConfiguration(new TripConfig());
         }
 
         #endregion
