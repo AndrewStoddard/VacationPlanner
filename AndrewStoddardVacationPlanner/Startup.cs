@@ -32,9 +32,11 @@ namespace AndrewStoddardVacationPlanner
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddControllersWithViews();
+            services.AddSession();
             services.AddDbContext<VacationContext>(options =>
                 options.UseSqlServer(this.Configuration.GetConnectionString("VacationContext")));
             services.AddTransient<IUnitOfWork, UnitOfWork>();
+            services.AddHttpContextAccessor();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -48,6 +50,7 @@ namespace AndrewStoddardVacationPlanner
             app.UseHttpsRedirection();
             app.UseStaticFiles();
             app.UseRouting();
+            app.UseSession();
 
             app.UseEndpoints(endpoints =>
             {
