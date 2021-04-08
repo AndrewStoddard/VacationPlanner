@@ -106,6 +106,40 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Home");
         }
 
+        [HttpGet]
+        public IActionResult AddTripStep1()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public IActionResult AddTripStep2(Trip trip)
+        {
+            if (ModelState.IsValid)
+            {
+                TempData["trip"] = trip;
+
+                return View();
+            }
+
+            return View("AddTripStep1", trip);
+        }
+
+        [HttpPost]
+        public IActionResult AddTrip(Trip trip)
+        {
+            var tripdata = (Trip) TempData["trip"];
+            trip.DestinationId = tripdata.DestinationId;
+            trip.AccommodationId = tripdata.AccommodationId;
+            trip.StartDate = tripdata.StartDate;
+            trip.EndDate = tripdata.EndDate;
+            this.unitOfWork.Trips.Insert(trip);
+            TempData["message"] =
+                $"Trip for {this.unitOfWork.Destinations.Get().FirstOrDefault(t => t.Id == trip.DestinationId).Name} on {trip.StartDate.ToShortDateString()}";
+
+            return RedirectToAction("Home");
+        }
+
         #endregion
     }
 }
