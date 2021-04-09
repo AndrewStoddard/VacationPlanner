@@ -75,17 +75,7 @@ namespace AndrewStoddardVacationPlanner.Controllers
 
         public IActionResult Manage()
         {
-            var viewModel = new ManageViewModel {
-                DestinationName = (string) TempData["dest_name"] ?? "",
-                AccommodationName = (string) TempData["acc_name"] ?? "",
-                AccommodationEmail = (string) TempData["acc_email"] ?? "",
-                AccommodationPhone = (string) TempData["acc_phone"] ?? "",
-                ActivityName = (string) TempData["acc_name"] ?? "",
-                Destinations = this.unitOfWork.Destinations.Get().ToList(),
-                Accommodations = this.unitOfWork.Accommodations.Get().ToList(),
-                Activities = this.unitOfWork.Activities.Get().ToList()
-            };
-            return View(viewModel);
+            return View(this.setupManageViewModel());
         }
 
         private List<Trip> orderDescending(List<Trip> trips)
@@ -203,9 +193,9 @@ namespace AndrewStoddardVacationPlanner.Controllers
                 return RedirectToAction("Home");
             }
 
-            if (!string.IsNullOrEmpty(viewModel.AccommodationName) ||
-                !string.IsNullOrEmpty(viewModel.AccommodationEmail) ||
-                !string.IsNullOrEmpty(viewModel.AccommodationPhone) && string.IsNullOrEmpty(viewModel.ActivityName) &&
+            if ((!string.IsNullOrEmpty(viewModel.AccommodationName) ||
+                 !string.IsNullOrEmpty(viewModel.AccommodationEmail) ||
+                 !string.IsNullOrEmpty(viewModel.AccommodationPhone)) && string.IsNullOrEmpty(viewModel.ActivityName) &&
                 string.IsNullOrEmpty(viewModel.DestinationName))
             {
                 var phone = viewModel.AccommodationPhone;
@@ -215,7 +205,7 @@ namespace AndrewStoddardVacationPlanner.Controllers
                     if (phone.Length != 10)
                     {
                         TempData["message"] = "Phone number is invalid";
-                        return View("Manage", viewModel);
+                        return RedirectToAction("Manage");
                     }
                 }
 
@@ -224,7 +214,7 @@ namespace AndrewStoddardVacationPlanner.Controllers
                     if (!new EmailAddressAttribute().IsValid(viewModel.AccommodationEmail))
                     {
                         TempData["message"] = "Email is invalid";
-                        return View("Manage", viewModel);
+                        return RedirectToAction("Manage");
                     }
                 }
 
@@ -242,12 +232,83 @@ namespace AndrewStoddardVacationPlanner.Controllers
                 string.IsNullOrEmpty(viewModel.AccommodationPhone) && string.IsNullOrEmpty(viewModel.ActivityName) &&
                 string.IsNullOrEmpty(viewModel.DestinationName))
             {
-                TempData["message"] = "You need to add a Destination, Accommodation Name, or Activity";
-                return View("Manage", viewModel);
+                TempData["message"] = "You need to add a destination, accommodation name, or activity";
+                return RedirectToAction("Manage");
             }
 
+            TempData["dest_name"] = viewModel.DestinationName;
+            TempData["acc_name"] = viewModel.AccommodationName;
+            TempData["acc_email"] = viewModel.AccommodationEmail;
+            TempData["acc_phone"] = viewModel.AccommodationPhone;
+            TempData["act_name"] = viewModel.ActivityName;
             TempData["message"] = "You can only add 1 item at a time. Please remove the fields you do not wish to add";
-            return View("Manage", viewModel);
+            return RedirectToAction("Manage");
+        }
+
+        [HttpPost]
+        public IActionResult DeleteFromManage(ManageViewModel viewModel)
+        {
+            if (viewModel.SelectedAccommodationToDelete != 0 && viewModel.SelectedActivityToDelete == 0 &&
+                viewModel.SelectedDestinationToDelete == 0)
+            {
+                var accommodation = this.unitOfWork.Accommodations.Get()
+                                        .FirstOrDefault(a => a.Id == viewModel.SelectedAccommodationToDelete);
+                TempData["message"] = $"Deleted {accommodation.Name} from the accommodations";
+                this.unitOfWork.Accommodations.Delete(accommodation);
+                this.unitOfWork.Save();
+                return RedirectToAction("Home");
+            }
+
+            if (viewModel.SelectedAccommodationToDelete == 0 && viewModel.SelectedActivityToDelete != 0 &&
+                viewModel.SelectedDestinationToDelete == 0)
+            {
+                var activity = this.unitOfWork.Activities.Get()
+                                   .FirstOrDefault(a => a.Id == viewModel.SelectedActivityToDelete);
+                TempData["message"] = $"Deleted {activity.Name} from the activities";
+                this.unitOfWork.Activities.Delete(activity);
+                this.unitOfWork.Save();
+                return RedirectToAction("Home");
+            }
+
+            if (viewModel.SelectedAccommodationToDelete == 0 && viewModel.SelectedActivityToDelete == 0 &&
+                viewModel.SelectedDestinationToDelete != 0)
+            {
+                var destination = this.unitOfWork.Destinations.Get()
+                                      .FirstOrDefault(d => d.Id == viewModel.SelectedDestinationToDelete);
+                TempData["message"] = $"Deleted {destination.Name} from the destinations";
+                this.unitOfWork.Destinations.Delete(destination);
+                this.unitOfWork.Save();
+                return RedirectToAction("Home");
+            }
+
+            if (viewModel.SelectedAccommodationToDelete == 0 && viewModel.SelectedActivityToDelete == 0 &&
+                viewModel.SelectedDestinationToDelete == 0)
+            {
+                TempData["message"] = "You need to select a destination, accommodation, or activity to delete";
+                return RedirectToAction("Manage");
+            }
+
+            TempData["message"] = "You can only delete one destination, accommodation, or activity at a time.";
+
+            return RedirectToAction("Manage");
+        }
+
+        private ManageViewModel setupManageViewModel()
+        {
+            var viewModel = new ManageViewModel {
+                DestinationName = (string) TempData["dest_name"] ?? "",
+                AccommodationName = (string) TempData["acc_name"] ?? "",
+                AccommodationEmail = (string) TempData["acc_email"] ?? "",
+                AccommodationPhone = (string) TempData["acc_phone"] ?? "",
+                ActivityName = (string) TempData["act_name"] ?? "",
+                Destinations = this.unitOfWork.Destinations.Get().ToList(),
+                Accommodations = this.unitOfWork.Accommodations.Get().ToList(),
+                Activities = this.unitOfWork.Activities.Get().ToList(),
+                SelectedAccommodationToDelete = 0,
+                SelectedActivityToDelete = 0,
+                SelectedDestinationToDelete = 0
+            };
+            return viewModel;
         }
 
         #endregion

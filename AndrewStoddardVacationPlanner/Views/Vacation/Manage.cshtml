@@ -28,6 +28,9 @@
                 <input class="form-control" asp-for="ActivityName" />
             </div>
             <button type="submit" class="btn btn-primary m-1">Add</button>
+            <input type="hidden" asp-for="Destinations" />
+            <input type="hidden" asp-for="Accommodations" />
+            <input type="hidden" asp-for="Activities" />
         </form>
     </div>
     <div class="col container-fluid">
@@ -35,16 +38,26 @@
         <form class="form-group" asp-action="DeleteFromManage" method="post">
             <div class="form-group border p-2">
                 <label>Destination:</label>
-                <select class="form-control" asp-for="SelectedDestinationToDelete" asp-items="@(new SelectList(Model.Destinations, "Id", "Name"))"></select>
+                <select class="form-control" asp-for="SelectedDestinationToDelete" asp-items="@(new SelectList(Model.Destinations, "Id", "Name"))">
+                    <option value="0"></option>
+                </select>
             </div>
             <div class="form-group border p-2">
                 <label>Accommodation:</label>
-                <select class="form-control" asp-for="SelectedAccommodationToDelete" asp-items="@(new SelectList(Model.Accommodations, "Id", "Name"))"></select>
+                <select class="form-control" asp-for="SelectedAccommodationToDelete" asp-items="@(new SelectList(Model.Accommodations, "Id", "Name"))">
+                    <option value="0"></option>
+                </select>
             </div>
             <div class="form-group border p-2">
                 <label>Activity:</label>
-                <select class="form-control" asp-for="SelectedActivityToDelete" asp-items="@(new SelectList(Model.Activities, "Id", "Name"))"></select>
+                <select class="form-control" asp-for="SelectedActivityToDelete" asp-items="@(new SelectList(Model.Activities, "Id", "Name"))">
+                    <option value="0"></option>
+                </select>
             </div>
+            <input type="hidden" asp-for="Destinations" />
+            <input type="hidden" asp-for="Accommodations" />
+            <input type="hidden" asp-for="Activities" />
+
             <button type="submit" class="btn btn-primary m-1">Delete</button>
         </form>
     </div>
