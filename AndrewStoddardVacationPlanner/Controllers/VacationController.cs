@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
+using System.Text.RegularExpressions;
 using AndrewStoddardVacationPlanner.Models.DataAccessLayer;
 using AndrewStoddardVacationPlanner.Models.DomainModels;
 using AndrewStoddardVacationPlanner.Models.Enums;
@@ -63,6 +65,29 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return View(viewModel);
         }
 
+        public IActionResult AddTripStep1()
+        {
+            ViewBag.Destinations = this.unitOfWork.Destinations.Get().ToList();
+            ViewBag.Accommodations = this.unitOfWork.Accommodations.Get().ToList();
+
+            return View();
+        }
+
+        public IActionResult Manage()
+        {
+            var viewModel = new ManageViewModel {
+                DestinationName = (string) TempData["dest_name"] ?? "",
+                AccommodationName = (string) TempData["acc_name"] ?? "",
+                AccommodationEmail = (string) TempData["acc_email"] ?? "",
+                AccommodationPhone = (string) TempData["acc_phone"] ?? "",
+                ActivityName = (string) TempData["acc_name"] ?? "",
+                Destinations = this.unitOfWork.Destinations.Get().ToList(),
+                Accommodations = this.unitOfWork.Accommodations.Get().ToList(),
+                Activities = this.unitOfWork.Activities.Get().ToList()
+            };
+            return View(viewModel);
+        }
+
         private List<Trip> orderDescending(List<Trip> trips)
         {
             trips = this.httpContextAccessor.HttpContext.Session.GetInt32("sort_type") switch {
@@ -110,15 +135,6 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Home");
         }
 
-        [HttpGet]
-        public IActionResult AddTripStep1()
-        {
-            ViewBag.Destinations = this.unitOfWork.Destinations.Get().ToList();
-            ViewBag.Accommodations = this.unitOfWork.Accommodations.Get().ToList();
-
-            return View();
-        }
-
         [HttpPost]
         public IActionResult AddTripStep2(Trip trip)
         {
@@ -160,6 +176,78 @@ namespace AndrewStoddardVacationPlanner.Controllers
                 $"Trip for {this.unitOfWork.Destinations.Get().FirstOrDefault(t => t.Id == trip.DestinationId).Name} on {trip.StartDate.ToShortDateString()}";
 
             return RedirectToAction("Home");
+        }
+
+        [HttpPost]
+        public IActionResult AddFromManage(ManageViewModel viewModel)
+        {
+            if (string.IsNullOrEmpty(viewModel.AccommodationName) &&
+                string.IsNullOrEmpty(viewModel.AccommodationEmail) &&
+                string.IsNullOrEmpty(viewModel.AccommodationPhone) && string.IsNullOrEmpty(viewModel.ActivityName) &&
+                !string.IsNullOrEmpty(viewModel.DestinationName))
+            {
+                this.unitOfWork.Destinations.Insert(new Destination {Name = viewModel.DestinationName});
+                this.unitOfWork.Save();
+                TempData["message"] = $"Added {viewModel.DestinationName} to destinations";
+                return RedirectToAction("Home");
+            }
+
+            if (string.IsNullOrEmpty(viewModel.AccommodationName) &&
+                string.IsNullOrEmpty(viewModel.AccommodationEmail) &&
+                string.IsNullOrEmpty(viewModel.AccommodationPhone) && !string.IsNullOrEmpty(viewModel.ActivityName) &&
+                string.IsNullOrEmpty(viewModel.DestinationName))
+            {
+                this.unitOfWork.Activities.Insert(new Activity {Name = viewModel.ActivityName});
+                this.unitOfWork.Save();
+                TempData["message"] = $"Added {viewModel.ActivityName} to activities";
+                return RedirectToAction("Home");
+            }
+
+            if (!string.IsNullOrEmpty(viewModel.AccommodationName) ||
+                !string.IsNullOrEmpty(viewModel.AccommodationEmail) ||
+                !string.IsNullOrEmpty(viewModel.AccommodationPhone) && string.IsNullOrEmpty(viewModel.ActivityName) &&
+                string.IsNullOrEmpty(viewModel.DestinationName))
+            {
+                var phone = viewModel.AccommodationPhone;
+                if (!string.IsNullOrEmpty(phone))
+                {
+                    phone = Regex.Replace(phone, @"[^0-9]+", "");
+                    if (phone.Length != 10)
+                    {
+                        TempData["message"] = "Phone number is invalid";
+                        return View("Manage", viewModel);
+                    }
+                }
+
+                if (!string.IsNullOrEmpty(viewModel.AccommodationEmail))
+                {
+                    if (!new EmailAddressAttribute().IsValid(viewModel.AccommodationEmail))
+                    {
+                        TempData["message"] = "Email is invalid";
+                        return View("Manage", viewModel);
+                    }
+                }
+
+                this.unitOfWork.Accommodations.Insert(new Accommodation {
+                    Name = viewModel.AccommodationName, Email = viewModel.AccommodationEmail,
+                    PhoneNumber = viewModel.AccommodationPhone
+                });
+                this.unitOfWork.Save();
+                TempData["message"] = $"Added {viewModel.AccommodationName} to accommodations";
+                return RedirectToAction("Home");
+            }
+
+            if (string.IsNullOrEmpty(viewModel.AccommodationName) &&
+                string.IsNullOrEmpty(viewModel.AccommodationEmail) &&
+                string.IsNullOrEmpty(viewModel.AccommodationPhone) && string.IsNullOrEmpty(viewModel.ActivityName) &&
+                string.IsNullOrEmpty(viewModel.DestinationName))
+            {
+                TempData["message"] = "You need to add a Destination, Accommodation Name, or Activity";
+                return View("Manage", viewModel);
+            }
+
+            TempData["message"] = "You can only add 1 item at a time. Please remove the fields you do not wish to add";
+            return View("Manage", viewModel);
         }
 
         #endregion
