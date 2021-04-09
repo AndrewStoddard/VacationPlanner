@@ -86,10 +86,10 @@ namespace AndrewStoddardVacationPlannerTests
             var trips = new List<Trip> {
                 trip1, trip2
             };
-            var accRepo = new Mock<Repository<Accommodation>>();
-            var actRepo = new Mock<Repository<Activity>>();
-            var destRepo = new Mock<Repository<Destination>>();
-            var tripRepo = new Mock<Repository<Trip>>();
+            var accRepo = new Mock<IRepository<Accommodation>>();
+            var actRepo = new Mock<IRepository<Activity>>();
+            var destRepo = new Mock<IRepository<Destination>>();
+            var tripRepo = new Mock<IRepository<Trip>>();
 
             accRepo.Setup(repo => repo.Get(null)).Returns(accs.AsQueryable());
             actRepo.Setup(repo => repo.Get(null)).Returns(acts.AsQueryable());
