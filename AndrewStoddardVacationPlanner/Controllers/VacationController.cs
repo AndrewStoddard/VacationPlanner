@@ -139,12 +139,20 @@ namespace AndrewStoddardVacationPlanner.Controllers
         }
 
         [HttpPost]
-        public IActionResult AddTrip(Trip trip)
+        public IActionResult AddTrip(int[] activities)
         {
-            trip.DestinationId = (int) TempData["trip_dest"];
-            trip.AccommodationId = (int) TempData["trip_acc"];
-            trip.StartDate = (DateTime) TempData["trip_start"];
-            trip.EndDate = (DateTime) TempData["trip_end"];
+            var trip = new Trip {
+                DestinationId = (int) TempData["trip_dest"],
+                AccommodationId = (int) TempData["trip_acc"],
+                StartDate = (DateTime) TempData["trip_start"],
+                EndDate = (DateTime) TempData["trip_end"]
+            };
+            trip.Activities = new List<Activity>();
+            foreach (var activityid in activities)
+            {
+                trip.Activities.Add(this.unitOfWork.Activities.Get().FirstOrDefault(a => a.Id == activityid));
+            }
+
             this.unitOfWork.Trips.Insert(trip);
             this.unitOfWork.Save();
 

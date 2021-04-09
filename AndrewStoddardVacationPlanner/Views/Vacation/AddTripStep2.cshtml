@@ -1,5 +1,4 @@
-﻿@model Trip
-@{
+﻿@{
     ViewData["Title"] = "Add Trip";
 }
 <div class="container">
@@ -7,7 +6,7 @@
         <div asp-validation-summary="All" class="text-danger"></div>
 
         <label>Activities: </label>
-        <select class="form-control" multiple="multiple" asp-for="Activities" asp-items="@(new MultiSelectList(ViewBag.Activities, "Id","Name"))"></select>
+        <select class="form-control" multiple="multiple" name="activities" asp-items="@(new MultiSelectList(ViewBag.Activities, "Id","Name"))"></select>
 
         <button type="submit" class="btn btn-primary m-1">Save</button>
         <a class="btn btn-primary" asp-action="Home">Cancel</a>
