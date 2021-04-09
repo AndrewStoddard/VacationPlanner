@@ -82,6 +82,7 @@ namespace AndrewStoddardVacationPlanner.Controllers
         {
             var trip = this.unitOfWork.Trips.Get().Include(t => t.Destination).FirstOrDefault(t => t.Id == id);
             this.unitOfWork.Trips.Delete(trip);
+            this.unitOfWork.Save();
             TempData["message"] = $"Deleted trip to {trip.Destination.Name} on {trip.StartDate.ToShortDateString()}.";
             return RedirectToAction("Home");
         }

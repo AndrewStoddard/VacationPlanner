@@ -21,31 +21,37 @@
                 <th>
                     <a asp-action="Sort" asp-route-sort="SortByActivities">Activities</a>
                 </th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
             @foreach (Trip trip in Model.Trips)
             {
-            <tr>
-                <td>
-                    @trip.Destination.Name
-                </td>
-                <td>
-                    @trip.StartDate.ToShortDateString()
-                </td>
-                <td>
-                    @trip.EndDate.ToShortDateString()
-                </td>
-                <td>
-                    @trip.Accommodation.Name
-                </td>
-                <td>
-                    @foreach (Activity activity in trip.Activities)
-                    {
-                    <p>@($"{activity.Name} \n") </p>
-                    }
-                </td>
-            </tr>
+                <tr>
+                    <td>
+                        @trip.Destination.Name
+                    </td>
+                    <td>
+                        @trip.StartDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @trip.EndDate.ToShortDateString()
+                    </td>
+                    <td>
+                        @trip.Accommodation.Name
+                    </td>
+                    <td>
+                        @foreach (Activity activity in trip.Activities)
+                        {
+                            <p>@($"{activity.Name} \n") </p>
+                        }
+                    </td>
+                    <td>
+                        <a class="btn btn-outline-danger" asp-action="DeleteTrip" asp-route-id="@trip.Id">Delete</a>
+                    </td>
+                </tr>
+
+                
             }
         </tbody>
     </table>
