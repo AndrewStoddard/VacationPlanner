@@ -78,6 +78,14 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return View(this.setupManageViewModel());
         }
 
+        public IActionResult DeleteTrip(int id)
+        {
+            var trip = this.unitOfWork.Trips.Get().Include(t => t.Destination).FirstOrDefault(t => t.Id == id);
+            this.unitOfWork.Trips.Delete(trip);
+            TempData["message"] = $"Deleted trip to {trip.Destination.Name} on {trip.StartDate.ToShortDateString()}.";
+            return RedirectToAction("Home");
+        }
+
         private List<Trip> orderDescending(List<Trip> trips)
         {
             trips = this.httpContextAccessor.HttpContext.Session.GetInt32("sort_type") switch {
