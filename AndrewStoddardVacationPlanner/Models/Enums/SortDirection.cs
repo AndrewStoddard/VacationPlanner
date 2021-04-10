@@ -1,4 +1,12 @@
-﻿namespace AndrewStoddardVacationPlanner.Models.Enums
+﻿// ***********************************************************************
+// Author           : Incendy
+// Created          : 04-08-2021
+//
+// Last Modified By : Incendy
+// Last Modified On : 04-08-2021
+// ***********************************************************************
+
+namespace AndrewStoddardVacationPlanner.Models.Enums
 {
     /// <summary>
     ///     Enum SortDirection

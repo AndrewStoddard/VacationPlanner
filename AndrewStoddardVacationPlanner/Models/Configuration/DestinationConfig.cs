@@ -1,13 +1,33 @@
-﻿using AndrewStoddardVacationPlanner.Models.DomainModels;
+﻿// ***********************************************************************
+// Author           : Incendy
+// Created          : 04-08-2021
+//
+// Last Modified By : Incendy
+// Last Modified On : 04-08-2021
+// ***********************************************************************
+
+using AndrewStoddardVacationPlanner.Models.DomainModels;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
 namespace AndrewStoddardVacationPlanner.Models.Configuration
 {
+    /// <summary>
+    ///     Class DestinationConfig.
+    ///     Implements the
+    ///     <see
+    ///         cref="Microsoft.EntityFrameworkCore.IEntityTypeConfiguration{AndrewStoddardVacationPlanner.Models.DomainModels.Destination}" />
+    /// </summary>
+    /// <seealso
+    ///     cref="Microsoft.EntityFrameworkCore.IEntityTypeConfiguration{AndrewStoddardVacationPlanner.Models.DomainModels.Destination}" />
     public class DestinationConfig : IEntityTypeConfiguration<Destination>
     {
         #region Methods
 
+        /// <summary>
+        ///     Configures the specified builder.
+        /// </summary>
+        /// <param name="builder">The builder.</param>
         public void Configure(EntityTypeBuilder<Destination> builder)
         {
             builder.HasKey(destination => destination.Id);

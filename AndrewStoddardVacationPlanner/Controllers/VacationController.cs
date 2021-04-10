@@ -1,4 +1,12 @@
-﻿using System;
+﻿// ***********************************************************************
+// Author           : Incendy
+// Created          : 04-08-2021
+//
+// Last Modified By : Incendy
+// Last Modified On : 04-08-2021
+// ***********************************************************************
+
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
@@ -13,17 +21,34 @@ using Microsoft.EntityFrameworkCore;
 
 namespace AndrewStoddardVacationPlanner.Controllers
 {
+    /// <summary>
+    ///     Class VacationController.
+    ///     Implements the <see cref="Microsoft.AspNetCore.Mvc.Controller" />
+    /// </summary>
+    /// <seealso cref="Microsoft.AspNetCore.Mvc.Controller" />
     public class VacationController : Controller
     {
         #region Data members
 
+        /// <summary>
+        ///     The unit of work
+        /// </summary>
         private readonly IUnitOfWork unitOfWork;
+
+        /// <summary>
+        ///     The HTTP context accessor
+        /// </summary>
         private readonly IHttpContextAccessor httpContextAccessor;
 
         #endregion
 
         #region Constructors
 
+        /// <summary>
+        ///     Initializes a new instance of the <see cref="VacationController" /> class.
+        /// </summary>
+        /// <param name="unitOfWork">The unit of work.</param>
+        /// <param name="httpContextAccessor">The HTTP context accessor.</param>
         public VacationController(IUnitOfWork unitOfWork, IHttpContextAccessor httpContextAccessor)
         {
             this.unitOfWork = unitOfWork;
@@ -34,6 +59,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
 
         #region Methods
 
+        /// <summary>
+        ///     Homes the specified page number.
+        /// </summary>
+        /// <param name="pageNumber">The page number.</param>
+        /// <returns>IActionResult.</returns>
         public IActionResult Home(int pageNumber = 1)
         {
             var pageSize = this.httpContextAccessor.HttpContext.Session.GetInt32("page_size") ?? 2;
@@ -65,6 +95,10 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return View(viewModel);
         }
 
+        /// <summary>
+        ///     Adds the trip step1.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         public IActionResult AddTripStep1()
         {
             ViewBag.Destinations = this.unitOfWork.Destinations.Get().ToList();
@@ -73,11 +107,20 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return View();
         }
 
+        /// <summary>
+        ///     Manages this instance.
+        /// </summary>
+        /// <returns>IActionResult.</returns>
         public IActionResult Manage()
         {
             return View(this.setupManageViewModel());
         }
 
+        /// <summary>
+        ///     Deletes the trip.
+        /// </summary>
+        /// <param name="id">The identifier.</param>
+        /// <returns>IActionResult.</returns>
         public IActionResult DeleteTrip(int id)
         {
             var trip = this.unitOfWork.Trips.Get().Include(t => t.Destination).FirstOrDefault(t => t.Id == id);
@@ -87,6 +130,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Home");
         }
 
+        /// <summary>
+        ///     Orders the descending.
+        /// </summary>
+        /// <param name="trips">The trips.</param>
+        /// <returns>List&lt;Trip&gt;.</returns>
         private List<Trip> orderDescending(List<Trip> trips)
         {
             trips = this.httpContextAccessor.HttpContext.Session.GetInt32("sort_type") switch {
@@ -99,6 +147,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return trips;
         }
 
+        /// <summary>
+        ///     Orders the ascending.
+        /// </summary>
+        /// <param name="trips">The trips.</param>
+        /// <returns>List&lt;Trip&gt;.</returns>
         private List<Trip> orderAscending(List<Trip> trips)
         {
             trips = this.httpContextAccessor.HttpContext.Session.GetInt32("sort_type") switch {
@@ -111,6 +164,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return trips;
         }
 
+        /// <summary>
+        ///     Pages the size.
+        /// </summary>
+        /// <param name="size">The size.</param>
+        /// <returns>IActionResult.</returns>
         [HttpPost]
         public IActionResult PageSize(int size)
         {
@@ -118,6 +176,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Home");
         }
 
+        /// <summary>
+        ///     Sorts the specified sort.
+        /// </summary>
+        /// <param name="sort">The sort.</param>
+        /// <returns>IActionResult.</returns>
         public IActionResult Sort(SortType sort)
         {
             this.httpContextAccessor.HttpContext.Session.SetInt32("sort_type", (int) sort);
@@ -134,6 +197,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Home");
         }
 
+        /// <summary>
+        ///     Adds the trip step2.
+        /// </summary>
+        /// <param name="trip">The trip.</param>
+        /// <returns>IActionResult.</returns>
         [HttpPost]
         public IActionResult AddTripStep2(Trip trip)
         {
@@ -153,6 +221,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return View("AddTripStep1", trip);
         }
 
+        /// <summary>
+        ///     Adds the trip.
+        /// </summary>
+        /// <param name="activities">The activities.</param>
+        /// <returns>IActionResult.</returns>
         [HttpPost]
         public IActionResult AddTrip(int[] activities)
         {
@@ -177,6 +250,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Home");
         }
 
+        /// <summary>
+        ///     Adds from manage.
+        /// </summary>
+        /// <param name="viewModel">The view model.</param>
+        /// <returns>IActionResult.</returns>
         [HttpPost]
         public IActionResult AddFromManage(ManageViewModel viewModel)
         {
@@ -254,6 +332,11 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Manage");
         }
 
+        /// <summary>
+        ///     Deletes from manage.
+        /// </summary>
+        /// <param name="viewModel">The view model.</param>
+        /// <returns>IActionResult.</returns>
         [HttpPost]
         public IActionResult DeleteFromManage(ManageViewModel viewModel)
         {
@@ -302,6 +385,10 @@ namespace AndrewStoddardVacationPlanner.Controllers
             return RedirectToAction("Manage");
         }
 
+        /// <summary>
+        ///     Setups the manage view model.
+        /// </summary>
+        /// <returns>ManageViewModel.</returns>
         private ManageViewModel setupManageViewModel()
         {
             var viewModel = new ManageViewModel {
