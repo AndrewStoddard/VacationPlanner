@@ -69,7 +69,9 @@ namespace AndrewStoddardVacationPlannerTests
             var trip1 = new Trip {
                 Id = 1,
                 DestinationId = 6,
+                Destination = dest6,
                 AccommodationId = 4,
+                Accommodation = acc4,
                 StartDate = new DateTime(2019, 12, 20),
                 EndDate = new DateTime(2020, 1, 2),
                 Activities = new List<Activity> {act2, act4}
@@ -77,7 +79,9 @@ namespace AndrewStoddardVacationPlannerTests
             var trip2 = new Trip {
                 Id = 2,
                 DestinationId = 2,
+                Destination = dest2,
                 AccommodationId = 1,
+                Accommodation = acc1,
                 StartDate = new DateTime(2020, 5, 23),
                 EndDate = new DateTime(2020, 6, 1),
                 Activities = new List<Activity> {act1, act3}
