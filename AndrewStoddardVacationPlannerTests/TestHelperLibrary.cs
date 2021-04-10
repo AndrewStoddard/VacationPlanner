@@ -87,8 +87,19 @@ namespace AndrewStoddardVacationPlannerTests
                 Activities = new List<Activity> {act1, act3}
             };
 
+            var trip3 = new Trip {
+                Id = 3,
+                DestinationId = 4,
+                Destination = dest4,
+                AccommodationId = 1,
+                Accommodation = acc1,
+                StartDate = new DateTime(2020, 6, 23),
+                EndDate = new DateTime(2020, 7, 1),
+                Activities = new List<Activity> {act1, act3}
+            };
+
             var trips = new List<Trip> {
-                trip1, trip2
+                trip1, trip2, trip3
             };
             var accRepo = new Mock<IRepository<Accommodation>>();
             var actRepo = new Mock<IRepository<Activity>>();
